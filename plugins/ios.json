@@ -18,6 +18,9 @@
         },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.tochiai.ble"
+        },
+        "cordova-plugin-bluetoothle": {
+            "PACKAGE_NAME": "com.tochiai.ble"
         }
     },
     "dependent_plugins": {}

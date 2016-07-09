@@ -29,6 +29,9 @@
         },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.tochiai.ble"
+        },
+        "cordova-plugin-bluetoothle": {
+            "PACKAGE_NAME": "com.tochiai.ble"
         }
     },
     "dependent_plugins": {},
@@ -62,12 +65,21 @@
             "merges": [
                 "navigator.notification"
             ]
+        },
+        {
+            "file": "plugins/cordova-plugin-bluetoothle/www/bluetoothle.js",
+            "id": "cordova-plugin-bluetoothle.BluetoothLe",
+            "pluginId": "cordova-plugin-bluetoothle",
+            "clobbers": [
+                "window.bluetoothle"
+            ]
         }
     ],
     "plugin_metadata": {
         "cordova-plugin-console": "1.0.3",
         "cordova-plugin-device": "1.1.2",
         "cordova-plugin-dialogs": "1.2.1",
-        "cordova-plugin-whitelist": "1.2.2"
+        "cordova-plugin-whitelist": "1.2.2",
+        "cordova-plugin-bluetoothle": "4.0.0"
     }
 }

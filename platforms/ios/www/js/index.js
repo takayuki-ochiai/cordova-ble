@@ -16,36 +16,103 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-var app = {
-    // Application Constructor
-    initialize: function() {
-        this.bindEvents();
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        app.receivedEvent('deviceready');
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
+function log(msg, level) {
+  level = level || "log";
+  if (typeof msg === "object") {
+    msg = JSON.stringify(msg, null, "  ");
+  }
 
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
+  console.log(msg);
 
-        console.log('Received Event: ' + id);
+  if (level === "status" || level === "error") {
+    var msgDiv = document.createElement("div");
+    msgDiv.textContent = msg;
+    if (level === "error") {
+      msgDiv.style.color = "red";
     }
+    msgDiv.style.padding = "5px 0";
+    msgDiv.style.borderBottom = "rgb(192,192,192) solid 1px";
+    document.getElementById("output").appendChild(msgDiv);
+  }
+}
+
+function addDevice(name, address) {
+
+  var button = document.createElement("button");
+  button.style.width = "100%";
+  button.style.padding = "10px";
+  button.style.fontSize = "16px";
+  button.textContent = name + ": " + address;
+
+  button.addEventListener("click", function() {
+
+    document.getElementById("services").innerHTML = "";
+    connect(address);
+  });
+
+  document.getElementById("devices").appendChild(button);
+}
+
+var foundDevices = [];
+
+function startScanSuccess(result) {
+  alert("startScanSuccess(" + result.status + ")");
+  alert("address(" + result.address + ")");
+  alert("Name(" + result.name + ")");
+  if (result.status === "scanStarted") {
+    alert("Scanning for devices (will continue to scan until you select a device)...", "status");
+  } else if (result.status === "scanResult") {
+    if (!foundDevices.some(function(device) {
+        return device.address === result.address;
+      })) {
+
+      alert('FOUND DEVICE:');
+      alert(result);
+      foundDevices.push(result);
+      addDevice(result.name, result.address);
+    }
+  }
+};
+
+
+
+var app = {
+  // Application Constructor
+  initialize: function() {
+    this.bindEvents();
+  },
+  // Bind Event Listeners
+  //
+  // Bind any events that are required on startup. Common events are:
+  // 'load', 'deviceready', 'offline', and 'online'.
+  bindEvents: function() {
+    document.addEventListener('deviceready', this.onDeviceReady, false);
+  },
+  // deviceready Event Handler
+  //
+  // The scope of 'this' is the event. In order to call the 'receivedEvent'
+  // function, we must explicitly call 'app.receivedEvent(...);'
+  onDeviceReady: function() {
+    app.receivedEvent('deviceready');
+  },
+  // Update DOM on a Received Event
+  receivedEvent: function(id) {
+    window.bluetoothle.initialize(
+      function() {
+        window.bluetoothle.startScan(
+          startScanSuccess,
+          function() {
+            alert("Scan failure")
+          }, { services: [] }
+        )
+      },
+
+      function() {
+        alert("Init failure")
+      }
+    )
+
+  }
 };
 
 app.initialize();
