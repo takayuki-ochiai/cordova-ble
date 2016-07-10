@@ -36,6 +36,26 @@ function log(msg, level) {
   }
 }
 
+function handleError(error) {
+  var msg;
+  if (error.error && error.message) {
+    var errorItems = [];
+    if (error.service) {
+      errorItems.push("service: " + (uuids[error.service] || error.service));
+    }
+    if (error.characteristic) {
+      errorItems.push("characteristic: " + (uuids[error.characteristic] || error.characteristic));
+    }
+    msg = "Error on " + error.error + ": " + error.message + (errorItems.length && (" (" + errorItems.join(", ") + ")"));
+  } else {
+    msg = error;
+  }
+  log(msg, "error");
+  if (error.error === "read" && error.service && error.characteristic) {
+    reportValue(error.service, error.characteristic, "Error: " + error.message);
+  }
+}
+
 function addDevice(name, address) {
 
   var button = document.createElement("button");
@@ -54,25 +74,108 @@ function addDevice(name, address) {
 }
 
 
+
+
+function stopScan() {
+  // new Promise(function(resolve, reject) {
+  //   bluetoothle.storpScan(resolve, reject, { address: result.address });
+  // }).then(stopScanSuccess, handleError);
+
+  window.bluetoothle.stopScan(stopScanSuccess, function() {
+    log("stop scan failure");
+  });
+
+}
+
+function stopScanSuccess() {
+  if (!foundDevices.length) {
+    log("NO DEVICES FOUND");
+  } else {
+    log("Found " + foundDevices.length + " devices.", "status");
+  }
+}
+
+function connectSuccess(result) {
+  log("connect success");
+  log("- " + result.status);
+  if (result.status === "connected") {
+    getDeviceServices(result.address);
+  } else if (result.status === "disconnected") {
+    log("Disconnected from device: " + result.address, "status");
+  }
+}
+
 var foundDevices = [];
 
 function startScanSuccess(result) {
   if (result.status === "scanStarted") {
-    alert("Scanning for devices (will continue to scan until you select a device)...", "status");
+    log("Scanning for devices (will continue to scan until you select a device)...", "status");
   } else if (result.status === "scanResult") {
     if (!foundDevices.some(function(device) {
         return device.address === result.address;
       })) {
 
-      alert('FOUND DEVICE:');
-      alert(result);
+      log('FOUND DEVICE:');
+      log(result);
       foundDevices.push(result);
       addDevice(result.name, result.address);
     }
   }
 };
 
+function getDeviceServices(address) {
+  log("Getting device services...", "status");
+  var platform = window.cordova.platformId;
+  if (platform === "android") {
+    new Promise(function(resolve, reject) {
+      bluetoothle.discover(resolve, reject, { address: address });
+    }).then(discoverSuccess, handleError);
+  } else if (platform === "windows") {
+    new Promise(function(resolve, reject) {
+      bluetoothle.services(resolve, reject, { address: address });
+    }).then(servicesSuccess, handleError);
+  } else {
+    alert("ios")
+    bluetoothle.services(servicesSuccess, handleError, { address: address });
+  }
+}
 
+function characteristicsSuccess(result) {
+  alert("characteristicsSuccess")
+  if (result.status === 'characteristics') {
+    console.log(result);
+  }
+}
+
+function servicesSuccess(result) {
+  alert("servicesSuccess is " + result.status);
+  if (result.status === "services") {
+    result.services.forEach(function(service) {
+      bluetoothle.characteristics(characteristicsSuccess, handleError, {
+        address: result.address,
+        service: service,
+        characteristics: []
+      });
+    })
+  }
+}
+
+
+function connect(address) {
+  log('Connecting to device: ' + address + "...", "status");
+  if (cordova.platformId === "windows") {
+    getDeviceServices(address);
+  } else {
+    log("stop scan");
+    stopScan();
+    window.bluetoothle.connect(
+      connectSuccess,
+      function() {
+        log("connect fail")
+      }, { address: address }
+    )
+  }
+}
 
 var app = {
   // Application Constructor
@@ -100,13 +203,13 @@ var app = {
         window.bluetoothle.startScan(
           startScanSuccess,
           function() {
-            alert("Scan failure")
+            log("Scan failure")
           }, { services: [] }
         )
       },
 
       function() {
-        alert("Init failure")
+        log("Init failure")
       }
     )
 
