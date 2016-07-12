@@ -26,6 +26,16 @@
                         }
                     ]
                 }
+            },
+            "*-Info.plist": {
+                "parents": {
+                    "UIBackgroundModes": [
+                        {
+                            "xml": "<array><string>bluetooth-peripheral</string></array>",
+                            "count": 1
+                        }
+                    ]
+                }
             }
         }
     },
@@ -43,6 +53,9 @@
             "PACKAGE_NAME": "com.tochiai.ble"
         },
         "cordova-plugin-bluetoothle": {
+            "PACKAGE_NAME": "com.tochiai.ble"
+        },
+        "cordova-plugin-background-mode-bluetooth-peripheral": {
             "PACKAGE_NAME": "com.tochiai.ble"
         }
     },
@@ -94,6 +107,7 @@
         "cordova-plugin-device": "1.1.2",
         "cordova-plugin-dialogs": "1.2.1",
         "cordova-plugin-whitelist": "1.2.2",
-        "cordova-plugin-bluetoothle": "4.0.0"
+        "cordova-plugin-bluetoothle": "4.0.0",
+        "cordova-plugin-background-mode-bluetooth-peripheral": "1.0.0"
     }
 }

@@ -46,7 +46,8 @@ module.exports.metadata =
     "cordova-plugin-device": "1.1.2",
     "cordova-plugin-dialogs": "1.2.1",
     "cordova-plugin-whitelist": "1.2.2",
-    "cordova-plugin-bluetoothle": "4.0.0"
+    "cordova-plugin-bluetoothle": "4.0.0",
+    "cordova-plugin-background-mode-bluetooth-peripheral": "1.0.0"
 }
 // BOTTOM OF METADATA
 });

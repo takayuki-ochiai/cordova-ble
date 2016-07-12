@@ -144,16 +144,6 @@ function characteristicsSuccess(result) {
   alert("characteristicsSuccess")
   if (result.status === 'characteristics') {
     console.log(result);
-    result.characteristics.forEach(function(characteristic) {
-      // var properties = characteristic.properties.reduce(function(previousValue, currentValue, index, array) {
-      //   return previousValue + currentValue;
-      // });
-
-      // var values = characteristic.values.inject(function(previousValue, currentValue, index, array) {
-      //   return previousValue + currentValue;
-      // });
-      alert("property: " + properties + " ")
-    })
   }
 }
 
@@ -178,9 +168,6 @@ function connect(address) {
   } else {
     log("stop scan");
     stopScan();
-    // new Promise(function(resolve, reject) {
-    //   bluetoothle.connect(resolve, reject, { address: address });
-    // }).then(connectSuccess, handleError);
     window.bluetoothle.connect(
       connectSuccess,
       function() {
@@ -211,6 +198,7 @@ var app = {
   },
   // Update DOM on a Received Event
   receivedEvent: function(id) {
+    console.log("central start");
     window.bluetoothle.initialize(
       function() {
         window.bluetoothle.startScan(

@@ -198,6 +198,7 @@ var app = {
   },
   // Update DOM on a Received Event
   receivedEvent: function(id) {
+    console.log("central start");
     window.bluetoothle.initialize(
       function() {
         window.bluetoothle.startScan(

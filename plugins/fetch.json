@@ -38,5 +38,13 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "cordova-plugin-background-mode-bluetooth-peripheral": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-background-mode-bluetooth-peripheral"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

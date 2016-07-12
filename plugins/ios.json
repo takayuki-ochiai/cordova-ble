@@ -21,6 +21,9 @@
         },
         "cordova-plugin-bluetoothle": {
             "PACKAGE_NAME": "com.tochiai.ble"
+        },
+        "cordova-plugin-background-mode-bluetooth-peripheral": {
+            "PACKAGE_NAME": "com.tochiai.ble"
         }
     },
     "dependent_plugins": {}
